@@ -61,7 +61,7 @@
         <tr>
           <td>[[FractionalSecondDigits]]</td>
           <td>`"fractionalSecondDigits"`</td>
-          <td>`"1"`, `"2"`, `"3"`</td>
+          <td>`0`, `1`, `2`, `3`</td>
         </tr>
         <tr>
           <td>[[TimeZoneName]]</td>
@@ -108,7 +108,10 @@
         1. Let _opt_ be a new Record.
         1. For each row of <emu-xref href="#table-datetimeformat-components"></emu-xref>, except the header row, in table order, do
           1. Let _prop_ be the name given in the Property column of the row.
-          1. Let _value_ be ? GetOption(_options_, _prop_, `"string"`, &laquo; the strings given in the Values column of the row &raquo;, *undefined*).
+          1. If _prop_ is `"fractionalSecondDigits"`, then
+            1. Let _value_ be ? GetNumberOption(options, "fractionalSecondDigits", 0, 3, 0).
+          1. Else, 
+            1. Let _value_ be ? GetOption(_options_, _prop_, `"string"`, &laquo; the strings given in the Values column of the row &raquo;, *undefined*).
           1. Set _opt_.[[&lt;_prop_&gt;]] to _value_.
         1. Let _dataLocaleData_ be _localeData_.[[&lt;_dataLocale_&gt;]].
         1. Let _formats_ be _dataLocaleData_.[[formats]].
@@ -209,7 +212,7 @@
             1. Else if _optionsProp_ is not *undefined* and _formatProp_ is *undefined*, then decrease _score_ by _removalPenalty_.
             1. Else if _optionsProp_ ≠ _formatProp_,
               1. If _property_ is `"fractionalSecondDigits"`, then
-                1. Let _values_ be &laquo; `"1"`, `"2"`, `"3"` &raquo;.
+                1. Let _values_ be &laquo; `0`, `1`, `2`, `3` &raquo;.
               1. Else, 
                 1. Let _values_ be &laquo; `"2-digit"`, `"numeric"`, `"narrow"`, `"short"`, `"long"` &raquo;.
               1. Let _optionsPropIndex_ be the index of _optionsProp_ within _values_.
@@ -273,7 +276,7 @@
         1. Perform ! CreateDataPropertyOrThrow(_nf2Options_, `"minimumIntegerDigits"`, 2).
         1. Perform ! CreateDataPropertyOrThrow(_nf2Options_, `"useGrouping"`, *false*).
         1. Let _nf2_ be ? Construct(%NumberFormat%, &laquo; _locale_, _nf2Options_ &raquo;).
-        1. Let _fractionalSecondDigits_ = ? ToNumber(_dateTimeFormat_.[[FractionalSecondDigits]])
+        1. Let _fractionalSecondDigits_ be _dateTimeFormat_.[[FractionalSecondDigits]]
           1. If _fractionalSecondDigits_ is greater than 0, then
             1. Let _nf3Options_ be ObjectCreate(*null*).
             1. Perform ! CreateDataPropertyOrThrow(_nf3Options_, `"minimumIntegerDigits"`, _fractionalSecondDigits_).
@@ -320,10 +323,7 @@
           1. Else if _p_ is equal to `"fractionalSecondDigits"`, then
             1. If _fractionalSecondDigits_ is greater than 0, then
               1. Let _v_ be _tm_.[[millisecond]].
-              1. If _fractionalSecondDigits_ = 1, then
-                1. Let _v_ be floor(_v_ / 100).
-              1. Else if _fractionalSecondDigits_ = 2, then
-                1. Let _v_ be floor(_v_ / 10).
+              1. Let _v_ be _v_ × 10<sup> ( 3 - _fractionalSecondDigits_) </sup>.
               1. Let _fv_ be FormatNumber(_nf3_, _v_).
               1. Append a new Record { [[Type]]: `"fractionalSecond"`, [[Value]]: _fv_ } as the last element of _result_.
           1. Else,
