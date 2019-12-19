@@ -323,7 +323,7 @@
           1. Else if _p_ is equal to `"fractionalSecondDigits"`, then
             1. If _fractionalSecondDigits_ is greater than 0, then
               1. Let _v_ be _tm_.[[millisecond]].
-              1. Let _v_ be floor(_v_ × 10<sup> ( 3 - _fractionalSecondDigits_)) </sup>.
+              1. Let _v_ be floor(_v_ × 10<sup>( _fractionalSecondDigits_ - 3 )</sup>).
               1. Let _fv_ be FormatNumber(_nf3_, _v_).
               1. Append a new Record { [[Type]]: `"fractionalSecond"`, [[Value]]: _fv_ } as the last element of _result_.
           1. Else,
